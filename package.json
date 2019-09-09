@@ -1,6 +1,6 @@
 {
-  "name": "react-highlight-words",
-  "version": "0.16.0",
+  "name": "react-highlight-words-ref",
+  "version": "0.16.1",
   "description": "React component to highlight words within a larger body of text",
   "main": "dist/main.js",
   "scripts": {
@@ -11,8 +11,6 @@
     "clean:website": "rimraf build",
     "clean:dist": "rimraf dist",
     "deploy": "gh-pages -d build",
-    "lint": "standard",
-    "prebuild": "npm run lint",
     "postpublish": "npm run deploy",
     "prepublish": "npm run build",
     "start": "webpack-dev-server --hot --inline --config webpack.config.dev.js",
@@ -98,8 +96,7 @@
   },
   "dependencies": {
     "highlight-words-core": "^1.2.0",
-    "memoize-one": "^4.0.0",
-    "prop-types": "^15.5.8"
+    "memoize-one": "^4.0.0"
   },
   "peerDependencies": {
     "react": "^0.14.0 || ^15.0.0 || ^16.0.0-0"

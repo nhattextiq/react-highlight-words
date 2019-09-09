@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types'
 import React from 'react'
 import Highlighter from './Highlighter'
 import { render } from './test-utils'
@@ -228,10 +227,6 @@ describe('Highlighter', () => {
 
   it('should support class components via :highlightTag', () => {
     class HighlightTag extends React.Component {
-      static propTypes = {
-        children: PropTypes.any,
-        highlightIndex: PropTypes.number
-      };
 
       render () {
         const { highlightIndex, ...rest } = this.props

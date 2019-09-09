@@ -1,37 +1,7 @@
 /* @flow */
 import { findAll } from 'highlight-words-core'
-import PropTypes from 'prop-types'
 import { createElement } from 'react'
 import memoizeOne from 'memoize-one'
-
-Highlighter.propTypes = {
-  activeClassName: PropTypes.string,
-  activeIndex: PropTypes.number,
-  activeStyle: PropTypes.object,
-  autoEscape: PropTypes.bool,
-  className: PropTypes.string,
-  findChunks: PropTypes.func,
-  highlightClassName: PropTypes.oneOfType([
-    PropTypes.object,
-    PropTypes.string
-  ]),
-  highlightStyle: PropTypes.object,
-  highlightTag: PropTypes.oneOfType([
-    PropTypes.node,
-    PropTypes.func,
-    PropTypes.string
-  ]),
-  sanitize: PropTypes.func,
-  searchWords: PropTypes.arrayOf(
-    PropTypes.oneOfType([
-      PropTypes.string,
-      PropTypes.instanceOf(RegExp)
-    ])
-  ).isRequired,
-  textToHighlight: PropTypes.string.isRequired,
-  unhighlightClassName: PropTypes.string,
-  unhighlightStyle: PropTypes.object
-}
 
 /**
  * Highlights all occurrences of search terms (searchText) within a string (textToHighlight).
@@ -53,6 +23,7 @@ export default function Highlighter ({
   textToHighlight,
   unhighlightClassName = '',
   unhighlightStyle,
+  containerRef,
   ...rest
 }) {
   const chunks = findAll({
@@ -79,6 +50,7 @@ export default function Highlighter ({
 
   return createElement('span', {
     className,
+    ref: containerRef,
     ...rest,
     children: chunks.map((chunk, index) => {
       const text = textToHighlight.substr(chunk.start, chunk.end - chunk.start)
