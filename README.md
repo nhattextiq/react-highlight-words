@@ -69,11 +69,11 @@ const Highlight = ({ children, highlightIndex }) => (
 
 ## Installation
 ```
-yarn add react-highlight-words
+yarn add react-highlight-words-ref
 ```
 
 ```
-npm i --save react-highlight-words
+npm i --save react-highlight-words-ref
 ```
 
 ## License

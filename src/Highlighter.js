@@ -1,5 +1,5 @@
 /* @flow */
-import { findAll } from 'highlight-words-core'
+import { findAll, fillInChunks } from 'highlight-words-core'
 import { createElement } from 'react'
 import memoizeOne from 'memoize-one'
 
@@ -24,16 +24,24 @@ export default function Highlighter ({
   unhighlightClassName = '',
   unhighlightStyle,
   containerRef,
+  enableCombineChunks = true,
+  chunksToHighlight = [],
   ...rest
 }) {
-  const chunks = findAll({
-    autoEscape,
-    caseSensitive,
-    findChunks,
-    sanitize,
-    searchWords,
-    textToHighlight
-  })
+  const chunks =
+  enableCombineChunks ?
+    findAll({
+      autoEscape,
+      caseSensitive,
+      findChunks,
+      sanitize,
+      searchWords,
+      textToHighlight
+    }) :
+    fillInChunks({
+      chunksToHighlight,
+      totalLength: textToHighlight ? textToHighlight.length : 0
+    })
   const HighlightTag = highlightTag
   let highlightIndex = -1
   let highlightClassNames = ''
