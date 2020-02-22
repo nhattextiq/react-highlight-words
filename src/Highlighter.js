@@ -25,6 +25,7 @@ export default function Highlighter ({
   unhighlightStyle,
   containerRef,
   enableCombineChunks = true,
+  getChunks = false,
   chunksToHighlight = [],
   ...rest
 }) {
@@ -56,57 +57,61 @@ export default function Highlighter ({
   }
   const memoizedLowercaseProps = memoizeOne(lowercaseProps)
 
+  const highlightedChunks = chunks.map((chunk, index) => {
+    const text = textToHighlight.substr(chunk.start, chunk.end - chunk.start)
+
+    if (chunk.highlight) {
+      highlightIndex++
+
+      let highlightClass
+      if (typeof highlightClassName === 'object') {
+        if (!caseSensitive) {
+          highlightClassName = memoizedLowercaseProps(highlightClassName)
+          highlightClass = highlightClassName[text.toLowerCase()]
+        } else {
+          highlightClass = highlightClassName[text]
+        }
+      } else {
+        highlightClass = highlightClassName
+      }
+
+      const isActive = highlightIndex === +activeIndex
+
+      highlightClassNames = `${highlightClass} ${isActive ? activeClassName : ''}`
+      highlightStyles = isActive === true && activeStyle != null
+        ? Object.assign({}, highlightStyle, activeStyle)
+        : highlightStyle
+
+      const props = {
+        children: text,
+        className: highlightClassNames,
+        key: index,
+        style: highlightStyles
+      }
+
+      // Don't attach arbitrary props to DOM elements; this triggers React DEV warnings (https://fb.me/react-unknown-prop)
+      // Only pass through the highlightIndex attribute for custom components.
+      if (typeof HighlightTag !== 'string') {
+        props.highlightIndex = highlightIndex
+      }
+
+      return createElement(HighlightTag, props)
+    } else {
+      return createElement('span', {
+        children: text,
+        className: unhighlightClassName,
+        key: index,
+        style: unhighlightStyle
+      })
+    }
+  })
+
+  if (getChunks) return highlightedChunks
+
   return createElement('span', {
     className,
     ref: containerRef,
     ...rest,
-    children: chunks.map((chunk, index) => {
-      const text = textToHighlight.substr(chunk.start, chunk.end - chunk.start)
-
-      if (chunk.highlight) {
-        highlightIndex++
-
-        let highlightClass
-        if (typeof highlightClassName === 'object') {
-          if (!caseSensitive) {
-            highlightClassName = memoizedLowercaseProps(highlightClassName)
-            highlightClass = highlightClassName[text.toLowerCase()]
-          } else {
-            highlightClass = highlightClassName[text]
-          }
-        } else {
-          highlightClass = highlightClassName
-        }
-
-        const isActive = highlightIndex === +activeIndex
-
-        highlightClassNames = `${highlightClass} ${isActive ? activeClassName : ''}`
-        highlightStyles = isActive === true && activeStyle != null
-          ? Object.assign({}, highlightStyle, activeStyle)
-          : highlightStyle
-
-        const props = {
-          children: text,
-          className: highlightClassNames,
-          key: index,
-          style: highlightStyles
-        }
-
-        // Don't attach arbitrary props to DOM elements; this triggers React DEV warnings (https://fb.me/react-unknown-prop)
-        // Only pass through the highlightIndex attribute for custom components.
-        if (typeof HighlightTag !== 'string') {
-          props.highlightIndex = highlightIndex
-        }
-
-        return createElement(HighlightTag, props)
-      } else {
-        return createElement('span', {
-          children: text,
-          className: unhighlightClassName,
-          key: index,
-          style: unhighlightStyle
-        })
-      }
-    })
+    children: highlightedChunks
   })
 }
